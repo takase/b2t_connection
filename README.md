@@ -79,7 +79,7 @@ cat generated.result.detok | sacrebleu -t wmt14/full -l en-de
 
 ### Pre-trained models
 
-Pre-trained models are [here](https://github.com/takase/trained_b2t_models)
+Pre-trained models are [here](https://github.com/takase/trained_b2t_models/tree/main/wmt_ende)
 
 Each model performance (SacreBLEU):
 
@@ -90,4 +90,4 @@ Each model performance (SacreBLEU):
 
 
 ## Acknowledgements
-This repository is based on [our previous project](https://github.com/takase/rethink_perturbations), whose large portion is borrowed from [fairseq](https://github.com/pytorch/fairseq).
+This repository is based on [our previous project](https://github.com/takase/rethink_perturbations/), whose large portion is borrowed from [fairseq](https://github.com/pytorch/fairseq).
