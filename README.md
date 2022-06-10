@@ -77,5 +77,17 @@ Compute SacreBLEU.
 cat generated.result.detok | sacrebleu -t wmt14/full -l en-de
 ```
 
+### Pre-trained models
+
+Pre-trained models are [here](https://github.com/takase/trained_b2t_models)
+
+Each model performance (SacreBLEU):
+
+| Name | 2010 | 2011 | 2012 | 2013 | 2014 | 2015 | 2016 |
+| :--- | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+| b2t_layer18_ave10.pt | 24.62 | 22.51 | 22.86 | 26.74 | 28.48 | 30.99 | 34.93 |
+| b2t_layer18_worddrop_with_sim_ave10.pt | 25.26 | 22.74 | 23.40 | 26.81 | 28.13 | 30.54 | 35.07 |
+
+
 ## Acknowledgements
 This repository is based on [our previous project](https://github.com/takase/rethink_perturbations), whose large portion is borrowed from [fairseq](https://github.com/pytorch/fairseq).
