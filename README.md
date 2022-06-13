@@ -79,7 +79,7 @@ cat generated.result.detok | sacrebleu -t wmt14/full -l en-de
 
 ### Pre-trained models
 
-Pre-trained models are [here](https://github.com/takase/trained_b2t_models/tree/main/wmt_ende)
+Pre-trained models are [here](https://drive.google.com/file/d/1qYr2o8baOYXqOgSC-PvSlchbyCMIhE8C/view?usp=sharing)
 
 Each model performance (SacreBLEU):
 
