@@ -52,6 +52,9 @@ class TransformerEncoderLayer(nn.Module):
             self.final_layer_norm = None
             self.scale4output = (args.encoder_embed_dim)**(-0.2)
             self.scale4residual = min((args.encoder_layers)**(-0.15), args.encoder_layers / 12.0)
+        if self.residual_bottom_to_top:
+            #rescaling parameters for deep transformers
+            rescaling_init(self, args.encoder_layers)
 
     def build_fc1(self, input_dim, output_dim):
         return nn.Linear(input_dim, output_dim)
@@ -209,6 +212,9 @@ class TransformerDecoderLayer(nn.Module):
             self.final_layer_norm = None
             self.scale4output = (args.decoder_embed_dim)**(-0.2)
             self.scale4residual = min((args.decoder_layers)**(-0.15), args.decoder_layers / 12.0)
+        if self.residual_bottom_to_top:
+            #rescaling parameters for deep transformers
+            rescaling_init(self, args.decoder_layers)
 
     def build_fc1(self, input_dim, output_dim):
         return nn.Linear(input_dim, output_dim)
@@ -391,3 +397,9 @@ def Linear(in_features, out_features, bias=True):
     if bias:
         nn.init.constant_(m.bias, 0.0)
     return m
+
+def rescaling_init(model, layer_num):
+    scaling = layer_num ** -0.5
+    for name, p in model.named_parameters():
+        if not "layer_norm" in name and "weight" in name:
+            p.data = p.data * scaling
