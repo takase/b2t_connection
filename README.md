@@ -1,22 +1,29 @@
-# On Layer Normalizations and Residual Connections in Transformers
+# B2T Connection: Serving Stability and Performance in Deep Transformers
 
 This repository contains transformers with B2T connection proposed in our paper.
 B2T connection mitigates unstable training property in Post-LN Transformers while maintaining all the advantages of Post-LN. Please check our paper for more details.
 
->[On Layer Normalizations and Residual Connections in Transformers](https://arxiv.org/abs/2206.00330)
+>[B2T Connection: Serving Stability and Performance in Deep Transformers](https://arxiv.org/abs/2206.00330)
 
 >Sho Takase, Shun Kiyono, Sosuke Kobayashi, Jun Suzuki
 
+>Proceedings of the Findings of ACL 2023
+
 ![Method](./method.png "Methods")
 
-As an example, this document provides the way to train the Post-LN based Transformer with B2T connection on WMT En-De.
+As an example, this document provides the way to train the 18L-18L Transformer with B2T connection on WMT En-De.
 
 
-## Requirements
+## Requirements and Installation
 
-- PyTorch version >= 1.4.0
+- PyTorch version == 1.11.0
 - Python version >= 3.6
 
+```bash
+git clone https://github.com/takase/b2t_connection
+cd b2t_connection
+pip install --editable ./
+```
 
 ## WMT En-De
 
@@ -26,23 +33,23 @@ As an example, this document provides the way to train the Post-LN based Transfo
 
 ##### 2. Train model
 
-Run the following command on 4 GPUs.
+Run the following command on 8 GPUs.
 
 ```bash
 python -u train.py \
-    pre-processed-data-dir \
+    pre-processed-data-dir --source-lang en --target-lang de --fp16 \
     --arch transformer_wmt_en_de --optimizer adam --adam-betas '(0.9, 0.98)' \
-    --clip-norm 0.0 --lr 0.001 --lr-scheduler inverse_sqrt --warmup-updates 4000 \
-    --warmup-init-lr 1e-07 --dropout 0.3 --weight-decay 0.0 --criterion label_smoothed_cross_entropy \
-    --label-smoothing 0.1 --max-tokens 3584 --min-lr 1e-09 --update-freq 32  --log-interval 100  --max-update 50000 \
-    --residual-bottom-to-top \
-    --share-all-embeddings --keep-last-epochs 10 --seed 1 --save-dir model-save-dir
+    --clip-norm 0.1 --lr 0.001 --lr-scheduler inverse_sqrt --warmup-updates 4000 \
+    --warmup-init-lr 1e-07 --dropout 0.5 --weight-decay 0.0 --criterion label_smoothed_cross_entropy \
+    --label-smoothing 0.1 --max-tokens 3584 --min-lr 1e-09 --update-freq 16  --log-interval 100  --max-update 50000 \
+    --sampling-method worddrop --enc-replace-rate 0.1 --dec-replace-rate 0.1 --decay-val 1000 \
+    --share-all-embeddings --keep-last-epochs 10 --seed 1 --save-dir model-save-dir \
+    --encoder-layers 18 --decoder-layers 18 --residual-bottom-to-top \
 ```
 
-If you train a deeper model than 6L-6L, we recommend setting `--dropout` to 3.5 (or 4.0) to achieve better performance.
-In addition, using perturbations such as adding `--sampling-method worddrop --enc-replace-rate 0.1 --dec-replace-rate 0.1` probably makes a model better.
+For 6L-6L, please set `--dropout` to 0.3, and remove `--sampling-method`, `--enc-replace-rate`, and `--dec-replace-rate` options.
 
-If you train a deeper model than 18L-18L, please set `--clip-norm` to 0.1.
+For 100L-100L, please set `--max-update` to 25000.
 
 ### Test (decoding)
 
@@ -77,17 +84,16 @@ Compute SacreBLEU.
 cat generated.result.detok | sacrebleu -t wmt14/full -l en-de
 ```
 
-### Pre-trained models
-
-Pre-trained models are [here](https://drive.google.com/file/d/1qYr2o8baOYXqOgSC-PvSlchbyCMIhE8C/view?usp=sharing)
+### 18L-18L Model Performance
 
 Each model performance (SacreBLEU):
 
-| Name | 2010 | 2011 | 2012 | 2013 | 2014 | 2015 | 2016 |
-| :--- | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
-| b2t_layer18_ave10.pt | 24.62 | 22.51 | 22.86 | 26.74 | 28.48 | 30.99 | 34.93 |
-| b2t_layer18_worddrop_with_sim_ave10.pt | 25.26 | 22.74 | 23.40 | 26.81 | 28.13 | 30.54 | 35.07 |
+| Method | 2010 | 2011 | 2012 | 2013 | 2014 | 2015 | 2016 | Average |
+| :--- | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :--: |
+| Pre-LN (from our paper) | 24.07| 21.98| 22.40| 26.28| 27.36| 29.74| 34.16| 26.57 |
+| B2T connection | 25.27 | 22.67 | 23.49 | 27.25 | 28.25 | 30.60 | 35.09 | 27.52 |
 
+Pre-trained models are [here](https://drive.google.com/file/d/1qYr2o8baOYXqOgSC-PvSlchbyCMIhE8C/view?usp=sharing)
 
 ## Acknowledgements
 This repository is based on [our previous project](https://github.com/takase/rethink_perturbations/), whose large portion is borrowed from [fairseq](https://github.com/pytorch/fairseq).
