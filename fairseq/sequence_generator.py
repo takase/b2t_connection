@@ -421,6 +421,7 @@ class SequenceGenerator(nn.Module):
             active_scores = active_scores.view(-1)
 
             # copy tokens and scores for active hypotheses
+            active_bbsz_idx = active_bbsz_idx.long()
             tokens[:, : step + 1] = torch.index_select(
                 tokens[:, : step + 1], dim=0, index=active_bbsz_idx
             )
@@ -514,6 +515,7 @@ class SequenceGenerator(nn.Module):
         assert bbsz_idx.numel() == eos_scores.numel()
 
         # clone relevant token and attention tensors
+        bbsz_idx = bbsz_idx.long()
         tokens_clone = tokens.index_select(0, bbsz_idx)[
             :, 1 : step + 2
         ]  # skip the first index, which is EOS
