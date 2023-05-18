@@ -93,7 +93,7 @@ Each model performance (SacreBLEU):
 | Pre-LN (from our paper) | 24.07| 21.98| 22.40| 26.28| 27.36| 29.74| 34.16| 26.57 |
 | B2T connection | 25.27 | 22.67 | 23.49 | 27.25 | 28.25 | 30.60 | 35.09 | 27.52 |
 
-Pre-trained models are [here](https://drive.google.com/file/d/1qYr2o8baOYXqOgSC-PvSlchbyCMIhE8C/view?usp=sharing)
+Pre-trained models are [here](https://drive.google.com/file/d/108XUTOjwuGfNPp18_xzZtMfebR1D0tjR/view?usp=sharing)
 
 ## Acknowledgements
 This repository is based on [our previous project](https://github.com/takase/rethink_perturbations/), whose large portion is borrowed from [fairseq](https://github.com/pytorch/fairseq).
